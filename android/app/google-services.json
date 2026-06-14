@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "457450586249",
+    "project_id": "climatrip-8d3bf",
+    "storage_bucket": "climatrip-8d3bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457450586249:android:db21f64136a64dec12c658",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp4-rhv4u_IvlyUASAgkcweFKBNZvrvAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
