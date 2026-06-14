@@ -1,53 +1,51 @@
-import 'dart:async';
 import '../models/cidade.dart';
+import '../data/firestore_service.dart';
 
 class DadosUsuarioBloc {
-  final _favController = StreamController<List<Cidade>>.broadcast();
-  final _histController = StreamController<List<Experiencia>>.broadcast();
+  final FirestoreService _firestoreService = FirestoreService();
 
-  Stream<List<Cidade>> get streamFavoritos => _favController.stream;
-  Stream<List<Experiencia>> get streamHistorico => _histController.stream;
+  // Streams diretos do Firestore — dados persistentes em tempo real
+  Stream<List<Cidade>> get streamFavoritos => const Stream.empty();
+  Stream<List<Experiencia>> get streamHistorico => const Stream.empty();
 
-  final List<Cidade> _listaFavoritosCache = [];
-  final List<Experiencia> _listaHistoricoCache = [];
+  Stream<List<Cidade>> streamFavoritosDoUsuario(String uid) {
+    return _firestoreService.escutarFavoritos(uid);
+  }
+
+  Stream<List<Experiencia>> streamHistoricoDoUsuario(String uid) {
+    return _firestoreService.escutarHistorico(uid);
+  }
 
   void carregarDadosUsuario(String uid) {
-    _favController.add(_listaFavoritosCache);
-    _histController.add(_listaHistoricoCache);
+    // Não precisa fazer nada — os streams do Firestore já são reativos
   }
 
-  void alternarFavorito(String uid, Cidade cidade, bool jaFavoritado) {
+  Future<void> alternarFavorito(String uid, Cidade cidade, bool jaFavoritado) async {
     if (jaFavoritado) {
-      _listaFavoritosCache.removeWhere((c) => c.nome == cidade.nome);
+      await _firestoreService.deletarFavorito(uid, cidade.nome);
     } else {
-      _listaFavoritosCache.add(cidade);
+      await _firestoreService.salvarFavorito(uid, cidade);
     }
-    _favController.add(List.from(_listaFavoritosCache));
   }
 
-  void registrarNovaExperiencia(String uid, Cidade cidade) {
-    final agora = DateTime.now();
-    final dataStr = '${agora.day.toString().padLeft(2, '0')}/${agora.month.toString().padLeft(2, '0')}/${agora.year}';
-    
-    final novaExp = Experiencia(
-      id: agora.millisecondsSinceEpoch.toString(),
-      cidade: cidade.nome,
-      data: dataStr,
-      clima: cidade.descClima,
-      temperatura: cidade.temperatura,
+  Future<void> registrarNovaExperiencia(String uid, Cidade cidade) async {
+    await _firestoreService.salvarExperiencia(
+      uid,
+      cidade.nome,
+      cidade.temperatura,
+      cidade.descClima,
     );
-    
-    _listaHistoricoCache.add(novaExp);
-    _histController.add(List.from(_listaHistoricoCache));
   }
 
-  void apagarExperiencia(String uid, String idExperiencia) {
-    _listaHistoricoCache.removeWhere((exp) => exp.id == idExperiencia);
-    _histController.add(List.from(_listaHistoricoCache));
+  Future<void> apagarExperiencia(String uid, String idExperiencia) async {
+    await _firestoreService.deletarExperiencia(uid, idExperiencia);
+  }
+
+  Future<void> editarExperiencia(String uid, String idExperiencia, String novaCidade) async {
+    await _firestoreService.editarExperiencia(uid, idExperiencia, novaCidade);
   }
 
   void dispose() {
-    _favController.close();
-    _histController.close();
+    // Nada a fechar — Firestore gerencia seus próprios streams
   }
 }

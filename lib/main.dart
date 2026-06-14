@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart'; // Importação essencial para a checagem web
+import 'firebase_options.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
-  // Garante que os componentes do Flutter estejam prontos
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Só tenta rodar o Firebase se NÃO for no navegador Chrome/Web.
-  // Isso evita que a tela fique totalmente branca!
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-  }
-  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ClimaTrip());
 }
 

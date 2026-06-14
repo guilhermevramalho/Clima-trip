@@ -45,6 +45,15 @@ class FirestoreService {
     await docRef.set(exp.toMap());
   }
 
+  Future<void> editarExperiencia(String userId, String idExp, String novaCidade) async {
+    await _firestore
+        .collection('usuarios')
+        .doc(userId)
+        .collection('historico')
+        .doc(idExp)
+        .update({'cidade': novaCidade});
+  }
+
   Future<void> deletarExperiencia(String userId, String idExp) async {
     await _firestore
         .collection('usuarios')
