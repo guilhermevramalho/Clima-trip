@@ -3,10 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/cidade.dart';
 
 class WeatherService {
-  // Insira aqui a sua chave gerada no site OpenWeatherMap
-  final String _apiKey = '308537ba2da804f94111afbe6de6428e'; 
+  final String _apiKey = '308537ba2da804f94111afbe6de6428e';
 
-  // Associa imagens contextuais do Unsplash baseadas no clima retornado (Exigência do Professor)
   String _obterLinkImagem(String climaPrincipal) {
     switch (climaPrincipal.toLowerCase()) {
       case 'clear':
@@ -33,7 +31,6 @@ class WeatherService {
       final principal = json['weather'][0]['main'];
       final temp = (json['main']['temp'] as num).round();
 
-      // Regras de negócio simples para preenchimento automático das dicas de vestuário
       String atividade = 'Fazer turismo urbano e visitar museus locais';
       String roupa = 'Roupas casuais confortáveis';
       String tagClima = 'agradavel';
